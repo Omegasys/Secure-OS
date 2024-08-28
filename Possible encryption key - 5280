@@ -1,0 +1,52 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+const int ENCRYPTION_KEY = 5280;
+
+string encrypt(string text, int key) {
+    string result = "";
+    
+    for (int i = 0; i < text.length(); i++) {
+        char c = text[i];
+        
+        // Encrypt uppercase letters
+        if (isupper(c)) {
+            c = (c - 'A' + key) % 26 + 'A';
+        }
+        // Encrypt lowercase letters
+        else if (islower(c)) {
+            c = (c - 'a' + key) % 26 + 'a';
+        }
+
+        result += c;
+    }
+    
+    return result;
+}
+
+string decrypt(string text, int key) {
+    return encrypt(text, 26 - (key % 26));
+}
+
+int main() {
+    string text;
+    int choice;
+    
+    cout << "Enter the text: ";
+    getline(cin, text);
+    
+    cout << "Choose an option:\n1. Encrypt\n2. Decrypt\n";
+    cin >> choice;
+    
+    if (choice == 1) {
+        cout << "Encrypted Text: " << encrypt(text, ENCRYPTION_KEY) << endl;
+    } else if (choice == 2) {
+        cout << "Decrypted Text: " << decrypt(text, ENCRYPTION_KEY) << endl;
+    } else {
+        cout << "Invalid choice!" << endl;
+    }
+
+    return 0;
+}
