@@ -1,0 +1,75 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Function to encode data using triple redundancy
+vector<string> encode(string data) {
+    vector<string> encodedData(3);
+    for (int i = 0; i < 3; i++) {
+        encodedData[i] = data; // Replicate the data three times
+    }
+    return encodedData;
+}
+
+// Function to decode data using majority voting
+string decode(vector<string> encodedData) {
+    string decoded = "";
+    
+    for (size_t i = 0; i < encodedData[0].size(); i++) {
+        int count[256] = {0}; // Array to count occurrences of each character
+
+        // Count occurrences of each character at position i
+        for (int j = 0; j < 3; j++) {
+            count[(int)encodedData[j][i]]++;
+        }
+
+        // Find the character with the majority vote
+        int majorityChar = 0;
+        for (int k = 1; k < 256; k++) {
+            if (count[k] > count[majorityChar]) {
+                majorityChar = k;
+            }
+        }
+
+        decoded += (char)majorityChar;
+    }
+
+    return decoded;
+}
+
+// Function to introduce an error for testing purposes
+vector<string> introduceError(vector<string> encodedData, int copyIndex, int charIndex) {
+    encodedData[copyIndex][charIndex] = encodedData[copyIndex][charIndex] == '0' ? '1' : '0'; // Flip a bit for testing
+    return encodedData;
+}
+
+int main() {
+    string data;
+    cout << "Enter the data to be encoded: ";
+    getline(cin, data);
+
+    // Encode the data
+    vector<string> encodedData = encode(data);
+    
+    cout << "Encoded Data: " << endl;
+    for (const string& part : encodedData) {
+        cout << part << endl;
+    }
+
+    // Introduce an error in one copy for testing
+    encodedData = introduceError(encodedData, 1, 0); // Introduce an error in the first character of the second copy
+
+    cout << "\nEncoded Data with Error: " << endl;
+    for (const string& part : encodedData) {
+        cout << part << endl;
+    }
+
+    // Decode the data
+    string decodedData = decode(encodedData);
+    
+    cout << "\nDecoded Data (after error correction): " << decodedData << endl;
+
+    return 0;
+}
